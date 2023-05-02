@@ -69,7 +69,13 @@ label_pass_confirm.place(x=10, y=340)
 entry_pass_confirm = Entry(frame_baixo, width=25, justify='left',show='*', font=('',15), highlightthickness=1, relief='solid')
 entry_pass_confirm.place(x=14, y=370)
 
-
+def verificar_email(email):
+    cursor.execute("SELECT * FROM usuarios WHERE Email=?", (email,))
+    resultado = cursor.fetchone()
+    if resultado is not None:
+        return True
+    else:
+        return False
 
 def verificar_dados(dados_corretos):
     nome = entry_nome.get()
@@ -79,6 +85,11 @@ def verificar_dados(dados_corretos):
     confirm_senha = entry_pass_confirm.get()
 
     dados_corretos=True
+
+    ### Verificar se o email já está cadastrado
+    if verificar_email(email):
+        messagebox.showerror('Erro', 'Este email já está cadastrado')
+        return dados_corretos==False
     
     ### Verificações de campo vazio
     if nome == "":
@@ -94,7 +105,8 @@ def verificar_dados(dados_corretos):
     if email == "":
         messagebox.showerror('Erro', 'Preencha o seu email')
         return dados_corretos==False
-    
+
+
 
     if senha == "":
         messagebox.showerror('Erro', 'Preencha a sua senha')

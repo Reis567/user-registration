@@ -2,6 +2,13 @@ from tkinter import *
 from tkinter import Tk , ttk, messagebox
 from variaveis import co0 , co1 , co2 , co3 , co4
 import re
+import sqlite3
+
+db_cadastro = sqlite3.connect('cadastro_usuarios.db')
+cursor = db_cadastro.cursor()
+#cursor.execute("CREATE TABLE usuarios (Nome text, Sobrenome text, Email text , Senha text)")
+
+
 #Janela criada
 janela = Tk()
 
@@ -99,16 +106,20 @@ def verificar_dados(dados_corretos):
         return dados_corretos==False
     
 
+    ### Retira espaços do sobrenome e nome
+    nome_sem_espaço = sobrenome.replace(' ', '')
+    sobrenome_sem_espaço = sobrenome.replace(' ', '')
+
 
     ###Verificações de "somente letras" em nome e sobrenome
-    if nome.isalpha():
+    if nome_sem_espaço.isalpha():
         print('Verificação de nome concluida')
     else:
         messagebox.showerror('Erro', 'Preencha o seu nome apenas com letras')
         return dados_corretos==False
     
 
-    if sobrenome.isalpha():
+    if sobrenome_sem_espaço.isalpha():
         print('Verificação de sobrenome concluida')
     else:
         messagebox.showerror('Erro', 'Preencha o seu sobrenome apenas com letras')
@@ -187,8 +198,8 @@ def cadastrar_dados():
     sobrenome = entry_last_name.get()
     email = entry_email.get()
     senha = entry_pass.get()
-    confirm_senha = entry_pass_confirm.get()
-
+    cursor.execute("INSERT INTO usuarios (Nome, Sobrenome, Email, Senha) VALUES (?, ?, ?, ?)", (nome, sobrenome, email, senha))
+    db_cadastro.commit()
     messagebox.showinfo('Cadastrado', 'Usuario cadastrado com sucesso')
 
 
